@@ -1,0 +1,39 @@
+import re
+import nltk
+#from nltk.corpus import stopwords
+#from nltk.corpus import wordnet
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+#nltk.download('omw-1.4')
+from bs4 import BeautifulSoup
+from tqdm.auto import tqdm
+
+REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
+BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
+STOPWORDS = set(stopwords.words('english'))
+
+df['description_clean'] = df['description_comb'].str.replace('\d+', "")
+
+def clean_text(text):
+    """
+        text: a string
+        
+        return: modified initial string
+    """
+    text = BeautifulSoup(text, "lxml").text # HTML decoding
+    text = text.lower() # lowercase text
+    text = REPLACE_BY_SPACE_RE.sub(' ', text) # replace REPLACE_BY_SPACE_RE symbols by space in text
+    text = re.sub(r"\s+[a-zA-Z]\s+", ' ', text) # single character removal
+    text = re.sub(r'\s+', ' ', text) # remove multiple spaces
+    text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
+
+    return text
+    
+def check_for_word(s):
+    return ' '.join(w for w in str(s).split(' ') if len(wordnet.synsets(w)) > 0) # retain only english words
+
+df['description_clean'] = df['description_clean'].apply(clean_text)
+tqdm.pandas(desc="Filtering only English Words")
+df['description_clean'] = df['description_clean'].progress_apply(check_for_word)
+df
