@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 
 #remove rows with labels which are tagged to only one example
 df = df[df.groupby('label')['label'].transform('size') > 1]
-df
 
 #Train Test Split
 X = df.description
