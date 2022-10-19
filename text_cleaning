@@ -1,11 +1,8 @@
 import re
 import nltk
-#from nltk.corpus import stopwords
-#from nltk.corpus import wordnet
 nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
-#nltk.download('omw-1.4')
 from bs4 import BeautifulSoup
 from tqdm.auto import tqdm
 
