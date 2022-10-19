@@ -10,7 +10,7 @@ REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â�
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
 
-df['description_clean'] = df['description'].str.replace('\d+', "")
+df['description'] = df['description'].str.replace('\d+', "")
 
 def clean_text(text):
     """
@@ -30,7 +30,7 @@ def clean_text(text):
 def check_for_word(s):
     return ' '.join(w for w in str(s).split(' ') if len(wordnet.synsets(w)) > 0) # retain only english words
 
-df['description_clean'] = df['description_clean'].apply(clean_text)
+df['description'] = df['description'].apply(clean_text)
 tqdm.pandas(desc="Filtering only English Words")
-df['description_clean'] = df['description_clean'].progress_apply(check_for_word)
+df['description'] = df['description'].progress_apply(check_for_word)
 df
