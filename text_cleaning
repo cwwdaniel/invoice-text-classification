@@ -1,3 +1,4 @@
+import numpy as np
 import re
 import nltk
 from nltk.corpus import stopwords
@@ -32,9 +33,36 @@ def clean_text(text):
 def check_for_word(s):
     return ' '.join(w for w in str(s).split(' ') if len(wordnet.synsets(w)) > 0) # retain only english words
 
+# Clean Text
 df['description'] = df['description'].apply(clean_text)
 
+# Keep only English Words
 tqdm.pandas(desc="Filtering only English Words")
 df['description'] = df['description'].progress_apply(check_for_word)
+
+# Remove Blank Rows
+df['description'].replace('', np.nan, inplace=True)
+df.dropna(subset=['description'], inplace=True)
+
+# Drop duplicates in a new Dataframe df2
+df2 = df[['description','label']].drop_duplicates()
+
+# Create Pivot Table based on df2
+df3 = pd.pivot_table(df2, values=['label'], index=['description'], aggfunc={'label': 'count'})
+
+# Retain only Label Count > 1 
+df3 = df3[df3['label'] > 1]
+
+# Convert Pivot Table to Dataframe df3
+df3 = df3.reset_index()
+
+# Drop 'Label' column in df3
+df3 = df3.drop(['label'], axis=1)
+
+# Convert df3 to list
+df3 = list(df3['description'])
+
+# Retain original dataframe rows where 'description' matches df3 list
+df = df[~df['description'].isin(df3)]
 
 df
