@@ -1,0 +1,67 @@
+import pandas as pd
+import re
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+from bs4 import BeautifulSoup
+import nlpaug.augmenter.word as naw
+from tqdm.auto import tqdm
+from numpy import random
+
+# Create a separate label column
+df["label_clean"] = df["label"]
+
+REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
+BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
+STOPWORDS = set(stopwords.words('english'))
+
+df['description'] = df['description'].str.replace('\d+', "")
+
+def clean_text(text):
+    """
+        text: a string
+        
+        return: modified initial string
+    """
+    text = BeautifulSoup(text, "lxml").text # HTML decoding
+    text = text.lower() # lowercase text
+    text = REPLACE_BY_SPACE_RE.sub(' ', text) # replace REPLACE_BY_SPACE_RE symbols by space in text
+    text = re.sub(r"\s+[a-zA-Z]\s+", ' ', text) # single character removal
+    text = re.sub(r'\s+', ' ', text) # remove multiple spaces
+    text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
+
+    return text
+
+# Clean Label
+df['label_clean'] = df['label_clean'].apply(clean_text)
+
+# Generate augmented label text in new column
+rand_aug = naw.RandomWordAug()
+tqdm.pandas(desc="Augmenting Text")
+df['label_aug'] = df.label_clean.progress_apply(rand_aug.augment)
+
+# Convert augmented text to string
+df['label_aug'] = df['label_aug'].str[0]
+
+# Tokenize the augmented text
+df['label_aug'] = df.apply(lambda row: row['label_aug'].split(), axis=1)
+
+# Select one word from the token list
+df['label_aug'] = [random.choice(x) for x in df["label_aug"]]
+
+# Generate a new column with the original text with the new word added as the last word in the text
+df["desc_le"] = df["description"] + ' ' + df["label_aug"]
+
+# Create df2 for original description and label
+df2 = df.filter(['description','label'], axis=1)
+
+# Create df3 for semantically enhanced description and label
+df3 = df.filter(['desc_le','label'], axis=1)
+
+# Rename 'description' column of df3
+df3.rename(columns={'desc_le':'description'}, inplace=True)
+
+# Append df3 to df2
+df = df2.append(df3)
+
+df
