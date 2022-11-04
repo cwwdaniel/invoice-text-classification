@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score, classification_report
 
-#Training and Testing Set Assignment
+# Training and Testing Set Assignment
 X = train.description
 y = train.label
 X_train = train.description
@@ -11,7 +11,7 @@ X_test = test.description
 y_train = train.label
 y_test = test.label
 
-#LSVM Modeling
+# LSVM Modeling
 SVC = Pipeline([('vect', CountVectorizer()),
                 ('tfidf', TfidfTransformer()),
                 ('clf', LinearSVC()),
