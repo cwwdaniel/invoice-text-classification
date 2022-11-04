@@ -45,14 +45,18 @@ df['description'] = df['description'].progress_apply(check_for_word)
 df['description'].replace('', np.nan, inplace=True)
 df.dropna(subset=['description'], inplace=True)
 
+#the intermediate data saved at this point is checked for any mislabelling of description (using excel)
+#one way is to view descriptions which have multiple labels where the minority label has only 1 instance
+#the mislaelled descriptions are corrected to the right label and loaded back to Python for next process
+
 # Drop duplicates in a new Dataframe df2
 df2 = df[['description','label']].drop_duplicates()
 
 # Create Pivot Table based on df2
 df3 = pd.pivot_table(df2, values=['label'], index=['description'], aggfunc={'label': 'count'})
 
-# Retain only Label Count > 1 
-df3 = df3[df3['label'] > 1]
+# Retain only Label Count = 1 
+df3 = df3[df3['label'] == 1]
 
 # Convert Pivot Table to Dataframe df3
 df3 = df3.reset_index()
@@ -64,6 +68,6 @@ df3 = df3.drop(['label'], axis=1)
 df3 = list(df3['description'])
 
 # Retain original dataframe rows where 'description' matches df3 list
-df = df[~df['description'].isin(df3)]
+df = df[df['description'].isin(df3)]
 
 df
