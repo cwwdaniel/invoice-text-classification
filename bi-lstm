@@ -1,0 +1,38 @@
+
+
+# Append test set to train set
+combine = train.append(test)
+
+# Dummify label for combined set
+y_combine = pd.get_dummies(combine['label']).values
+
+# Split set back to train and test for label column
+y_train = y_combine[0:20026,]
+y_test = y_combine[20026:21794,]
+
+#Train and Test Set Assignment for description column
+X_train = train.description
+X_test = test.description
+
+# Tokenization
+max_words = 50000
+oov_tok = '<OOV>' # OOV = Out of Vocabulary
+tokenize = Tokenizer(num_words=max_words, oov_token=oov_tok)
+tokenize.fit_on_texts(train['description'])
+word_index = tokenize.word_index
+
+# Text to Sequence
+X_train = tokenize.texts_to_sequences(X_train)
+X_test = tokenize.texts_to_sequences(X_test)
+
+# Pad Sequence - Train Set
+max_length = 200
+trunc_type = 'post'
+padding_type = 'post'
+X_train = pad_sequences(X_train, maxlen=max_length, padding=padding_type, truncating=trunc_type)
+
+# Pad Sequence - Test Set
+max_length = 200
+trunc_type = 'post'
+padding_type = 'post'
+X_test = pad_sequences(X_test, maxlen=max_length, padding=padding_type, truncating=trunc_type)
