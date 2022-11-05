@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import nlpaug.augmenter.word as naw
 
+#Load Data
+df = pd.read_csv('path/data.csv')
+
 # Augment Argument
 wordnet = naw.SynonymAug(aug_src='wordnet')
 
@@ -29,5 +32,3 @@ aug_df
 
 # Append Augmented Text
 df = df.append(aug_df)
-
-df
