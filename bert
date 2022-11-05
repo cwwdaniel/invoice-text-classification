@@ -68,25 +68,13 @@ optimizer = AdamW(model.parameters(), lr=1e-5, eps=1e-8)
 epochs = 60
 scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=len(dataloader_train)*epochs)
 
-# Define Performance Metrics and Evaluation Function
-
+# Define Performance Metrics
 def f1_score_func(preds, labels):
     preds_flat = np.argmax(preds, axis=1).flatten()
     labels_flat = labels.flatten()
     return f1_score(labels_flat, preds_flat, average='weighted')
 
-def accuracy_per_class(preds, labels):
-    label_dict_inverse = {v: k for k, v in label_dict.items()}
-    
-    preds_flat = np.argmax(preds, axis=1).flatten()
-    labels_flat = labels.flatten()
-
-    for label in np.unique(labels_flat):
-        y_preds = preds_flat[labels_flat==label]
-        y_true = labels_flat[labels_flat==label]
-        print(f'Class: {label_dict_inverse[label]}')
-        print(f'Accuracy: {len(y_preds[y_preds==label])}/{len(y_true)}\n')
-
+# Define Evaluation Metrics
 def evaluate(dataloader_val):
 
     model.eval()
@@ -122,7 +110,7 @@ def evaluate(dataloader_val):
             
     return loss_val_avg, predictions, true_vals
 
-#Training Loop
+# Training Loop
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
@@ -176,7 +164,7 @@ for epoch in tqdm(range(1, epochs+1)):
     tqdm.write(f'Validation loss: {val_loss}')
     tqdm.write(f'F1 Score (Weighted): {val_f1}')
 
-#Model Evaluation
+# Model Evaluation
 model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=len(label_dict), output_attentions=False, output_hidden_states=False)
 model.to(device)
 model.load_state_dict(torch.load('path/finetuned_BERT_epoch_{epoch}.model', map_location=torch.device('cpu')))
