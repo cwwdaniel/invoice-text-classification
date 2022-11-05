@@ -16,7 +16,6 @@ possible_labels = train.label.unique()
 label_dict = {}
 for index, possible_label in enumerate(possible_labels):
     label_dict[possible_label] = index
-label_dict
 
 # Replace Label with Encoding
 train['label'] = train.label.replace(label_dict)
