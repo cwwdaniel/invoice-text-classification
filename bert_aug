@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import nlpaug.augmenter.word.context_word_embs as aug
 
+# Load Data
+df = pd.read_csv('path/data.csv')
+
 # Augment Argument
 bert = aug.ContextualWordEmbsAug(model_path='bert-base-uncased', action='substitute')
 
@@ -29,5 +32,3 @@ aug_df
 
 # Append Augmented Text
 df = df.append(aug_df)
-
-df
