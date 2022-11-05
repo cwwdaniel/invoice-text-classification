@@ -10,12 +10,18 @@ nltk.download('omw-1.4')
 from bs4 import BeautifulSoup
 from tqdm.auto import tqdm
 
+# Load Data
+df = pd.read_csv('path/data.csv')
+
+# Replace Digits with Blanks
+df['description'] = df['description'].str.replace('\d+', "")
+
+# Assign Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
 
-df['description'] = df['description'].str.replace('\d+', "")
-
+# Define Cleaning Sequence
 def clean_text(text):
     """
         text: a string
@@ -30,7 +36,8 @@ def clean_text(text):
     text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
 
     return text
-    
+
+# Define Function to Retain only English Words
 def check_for_word(s):
     return ' '.join(w for w in str(s).split(' ') if len(wordnet.synsets(w)) > 0) # retain only english words
 
@@ -69,5 +76,3 @@ df3 = list(df3['description'])
 
 # Retain original dataframe rows where 'description' matches df3 list
 df = df[df['description'].isin(df3)]
-
-df
