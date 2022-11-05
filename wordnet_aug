@@ -1,0 +1,33 @@
+import pandas as pd
+import numpy as np
+import nlpaug.augmenter.word as naw
+
+# Augment Argument
+wordnet = naw.SynonymAug(aug_src='wordnet')
+
+# Augment Function
+def augmentMyData(df, repetitions=1, samples=200):
+    augmented_texts = []
+    # select only the class to augment
+    spam_df = df[df['label'] == 'sample_label'].reset_index(drop=True) # removes unecessary index column
+    for i in tqdm(np.random.randint(0, len(spam_df), samples)):
+        # generating 'n_samples' augmented texts
+        for _ in range(repetitions):
+            augmented_text = wordnet.augment(spam_df['description'].iloc[i])
+            augmented_texts.append(augmented_text)
+    
+    data = {
+        'description': augmented_texts,
+        'label': 'sample_label'        
+    }
+    aug_df = pd.DataFrame(data)
+    return aug_df
+
+# Run Augment
+aug_df = augmentMyData(df, samples=5)
+aug_df
+
+# Append Augmented Text
+df = df.append(aug_df)
+
+df
