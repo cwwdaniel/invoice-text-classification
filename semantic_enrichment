@@ -8,15 +8,21 @@ import nlpaug.augmenter.word as naw
 from tqdm.auto import tqdm
 from numpy import random
 
+# Load Data
+df = pd.read_csv('path/data.csv')
+
 # Create a separate label column
 df["label_clean"] = df["label"]
 
+# Replace digits with blanks
+df['description'] = df['description'].str.replace('\d+', "")
+
+# Set Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
 
-df['description'] = df['description'].str.replace('\d+', "")
-
+# Define Cleaning Sequence
 def clean_text(text):
     """
         text: a string
@@ -63,5 +69,3 @@ df3.rename(columns={'desc_le':'description'}, inplace=True)
 
 # Append df3 to df2
 df = df2.append(df3)
-
-df
