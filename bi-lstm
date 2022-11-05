@@ -1,4 +1,12 @@
-
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from keras.layers import Dense, LSTM, Dropout, Activation, Embedding, Bidirectional
+from keras_preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from keras.models import Sequential
+from keras.callbacks import EarlyStopping
+from sklearn.metrics import accuracy_score, classification_report
 
 # Append test set to train set
 combine = train.append(test)
@@ -36,3 +44,50 @@ max_length = 200
 trunc_type = 'post'
 padding_type = 'post'
 X_test = pad_sequences(X_test, maxlen=max_length, padding=padding_type, truncating=trunc_type)
+
+# Create Embedding Index
+embeddings_index = {}
+f = open('path/glove.6B.100d.txt', encoding="utf8")
+for line in f:
+    values = line.split()
+    word = values[0]
+    coefs = np.asarray(values[1:], dtype='float32')
+    embeddings_index[word] = coefs
+f.close()
+
+# Create Embedding Matrix
+embedding_dim = 100
+embedding_matrix = np.zeros((len(word_index) + 1, embedding_dim))
+for word, i in word_index.items():
+    embedding_vector = embeddings_index.get(word)
+    if embedding_vector is not None:
+        # words not found in embedding index will be all-zeros.
+        embedding_matrix[i] = embedding_vector
+        
+# Create Embedding Layer
+# Max number of words in each complaint.
+MAX_SEQUENCE_LENGTH = 200
+embedding_layer = Embedding(len(word_index) + 1, embedding_dim, weights=[embedding_matrix], input_length=MAX_SEQUENCE_LENGTH, trainable=True)
+
+# Build Model
+model = Sequential()
+model.add(embedding_layer)
+model.add(Dropout(0.5))
+model.add(Bidirectional(LSTM(embedding_dim)))
+model.add(Dense(69, activation='softmax'))
+
+# Compile Model
+opt = tf.keras.optimizers.Adam(lr=0.001, decay=1e-6)
+model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+
+# Train Model
+num_epochs = 100
+batch_size = 128
+history = model.fit(X_train, y_train, epochs=num_epochs, batch_size=batch_size,validation_split=0.15,callbacks=[EarlyStopping(monitor='val_loss', patience=3, min_delta=0.0001)])
+
+# Test Model
+y_pred = model.predict(X_test)
+y_pred2 = np.argmax(y_pred, axis=1)
+y_test2 = np.argmax(y_test, axis=1)
+print('accuracy %s' % accuracy_score(y_pred2, y_test2))
+print(classification_report(y_test2, y_pred2))
