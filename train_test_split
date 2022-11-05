@@ -1,6 +1,9 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+# Load Data
+df = pd.read_csv('path/data.csv')
+
 # Remove rows with labels which are tagged to only one example
 df = df[df.groupby('label')['label'].transform('size') > 1]
 
@@ -13,4 +16,4 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random
 df_train_set = pd.concat([X_train, y_train], axis = 1, sort=False)
 
 # Create test set
-df_test_set = pd.concat([X_test, y_test], axis = 1, sort=False)
+df_test_set = pd.concat([X_test, y_test], axis = 1, sort=False
