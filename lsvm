@@ -3,6 +3,10 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score, classification_report
 
+# Load Data
+train = pd.read_csv('path/data.csv')
+test = pd.read_csv('path/data.csv')
+
 # Training and Testing Set Assignment
 X = train.description
 y = train.label
