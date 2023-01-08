@@ -49,29 +49,10 @@ trunc_type = 'post'
 padding_type = 'post'
 X_test = pad_sequences(X_test, maxlen=max_length, padding=padding_type, truncating=trunc_type)
 
-# Create Embedding Index
-embeddings_index = {}
-f = open('path/glove.6B.100d.txt', encoding="utf8")
-for line in f:
-    values = line.split()
-    word = values[0]
-    coefs = np.asarray(values[1:], dtype='float32')
-    embeddings_index[word] = coefs
-f.close()
-
-# Create Embedding Matrix
-embedding_dim = 100
-embedding_matrix = np.zeros((len(word_index) + 1, embedding_dim))
-for word, i in word_index.items():
-    embedding_vector = embeddings_index.get(word)
-    if embedding_vector is not None:
-        # words not found in embedding index will be all-zeros.
-        embedding_matrix[i] = embedding_vector
-        
 # Create Embedding Layer
-# Max number of words in each complaint.
 MAX_SEQUENCE_LENGTH = 200
-embedding_layer = Embedding(len(word_index) + 1, embedding_dim, weights=[embedding_matrix], input_length=MAX_SEQUENCE_LENGTH, trainable=True)
+embedding_dim = 100
+embedding_layer = Embedding(len(word_index), embedding_dim, input_length=MAX_SEQUENCE_LENGTH)
 
 # Build Model
 model = Sequential()
