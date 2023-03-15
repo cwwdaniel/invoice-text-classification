@@ -7,7 +7,6 @@ from nltk.corpus import wordnet
 nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
-from bs4 import BeautifulSoup
 from tqdm.auto import tqdm
 
 # Load Data
@@ -18,7 +17,6 @@ df['description'] = df['description'].str.replace('\d+', "")
 
 # Assign Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
-BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
 
 # Define Cleaning Sequence
@@ -28,10 +26,9 @@ def clean_text(text):
         
         return: modified initial string
     """
-    text = BeautifulSoup(text, "lxml").text # HTML decoding
     text = text.lower() # lowercase text
     text = REPLACE_BY_SPACE_RE.sub(' ', text) # replace REPLACE_BY_SPACE_RE symbols by space in text
-    text = re.sub(r"\s+[a-zA-Z]\s+", ' ', text) # single character removal
+    text = re.sub(r"\b[a-zA-Z]\b", ' ', text) # single character removal
     text = re.sub(r'\s+', ' ', text) # remove multiple spaces
     text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
 
@@ -51,28 +48,3 @@ df['description'] = df['description'].progress_apply(check_for_word)
 # Remove Blank Rows
 df['description'].replace('', np.nan, inplace=True)
 df.dropna(subset=['description'], inplace=True)
-
-#the intermediate data saved at this point is checked for any mislabelling of description (using excel)
-#one way is to view descriptions which have multiple labels where the minority label has only 1 instance
-#the mislaelled descriptions are corrected to the right label and loaded back to Python for next process
-
-# Drop duplicates in a new Dataframe df2
-df2 = df[['description','label']].drop_duplicates()
-
-# Create Pivot Table based on df2
-df3 = pd.pivot_table(df2, values=['label'], index=['description'], aggfunc={'label': 'count'})
-
-# Retain only Label Count = 1 
-df3 = df3[df3['label'] == 1]
-
-# Convert Pivot Table to Dataframe df3
-df3 = df3.reset_index()
-
-# Drop 'label' column in df3
-df3 = df3.drop(['label'], axis=1)
-
-# Convert df3 to list
-df3 = list(df3['description'])
-
-# Retain original dataframe rows where 'description' matches df3 list
-df = df[df['description'].isin(df3)]
