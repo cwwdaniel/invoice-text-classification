@@ -18,6 +18,7 @@ df['description'] = df['description'].str.replace('\d+', "")
 # Assign Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
 STOPWORDS = set(stopwords.words('english'))
+MONTH = {'january','jan','february','feb','march','mar','april','apr','may','june','jun','july','jul','august','aug','september','sept','sep','october','oct','november','nov','december','dec'}
 
 # Define Cleaning Sequence
 def clean_text(text):
@@ -31,6 +32,7 @@ def clean_text(text):
     text = re.sub(r"\b[a-zA-Z]\b", ' ', text) # single character removal
     text = re.sub(r'\s+', ' ', text) # remove multiple spaces
     text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
+    text = ' '.join(word for word in text.split() if word not in MONTH) # delete month names from text
 
     return text
 
