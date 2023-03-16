@@ -1,9 +1,12 @@
 import pandas as pd
+import numpy as np
 import re
 import nltk
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet
 nltk.download('stopwords')
-from bs4 import BeautifulSoup
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 import nlpaug.augmenter.word as naw
 from tqdm.auto import tqdm
 from numpy import random
@@ -14,13 +17,13 @@ df = pd.read_csv('path/data.csv')
 # Create a separate label column
 df["label_clean"] = df["label"]
 
-# Replace digits with blanks
-df['description'] = df['description'].str.replace('\d+', "")
+# Replace Digits with Blanks
+df['label_clean'] = df['label_clean'].str.replace('\d+', "")
 
-# Set Cleaning Criteria
+# Assign Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
-BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
+MONTH = {'january','jan','february','feb','march','mar','april','apr','may','june','jun','july','jul','august','aug','september','sept','sep','october','oct','november','nov','december','dec'}
 
 # Define Cleaning Sequence
 def clean_text(text):
@@ -29,17 +32,29 @@ def clean_text(text):
         
         return: modified initial string
     """
-    text = BeautifulSoup(text, "lxml").text # HTML decoding
     text = text.lower() # lowercase text
     text = REPLACE_BY_SPACE_RE.sub(' ', text) # replace REPLACE_BY_SPACE_RE symbols by space in text
-    text = re.sub(r"\s+[a-zA-Z]\s+", ' ', text) # single character removal
+    text = re.sub(r"\b[a-zA-Z]\b", ' ', text) # single character removal
     text = re.sub(r'\s+', ' ', text) # remove multiple spaces
     text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
+    text = ' '.join(word for word in text.split() if word not in MONTH) # delete month names from text
 
     return text
 
+# Define Function to Retain only English Words
+def check_for_word(s):
+    return ' '.join(w for w in str(s).split(' ') if len(wordnet.synsets(w)) > 0) # retain only english words
+
 # Clean Label
 df['label_clean'] = df['label_clean'].apply(clean_text)
+
+# Keep only English Words
+tqdm.pandas(desc="Filtering only English Words")
+df['label_clean'] = df['label_clean'].progress_apply(check_for_word)
+
+# Remove Blank Rows
+df['label_clean'].replace('', np.nan, inplace=True)
+df.dropna(subset=['label_clean'], inplace=True)
 
 # Generate augmented label text in new column
 rand_aug = naw.RandomWordAug()
