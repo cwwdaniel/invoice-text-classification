@@ -62,7 +62,7 @@ model.add(Bidirectional(LSTM(embedding_dim)))
 model.add(Dense(69, activation='softmax'))
 
 # Compile Model
-opt = tf.keras.optimizers.Adam(lr=0.001, decay=1e-6)
+opt = tf.keras.optimizers.legacy.Adam(lr=0.001, decay=1e-6)
 model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 
 # Train Model
