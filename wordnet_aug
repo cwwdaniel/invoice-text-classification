@@ -28,8 +28,10 @@ def augmentMyData(df, selectedclass, repetitions=1, samples=200):
     return aug_df
 
 # Run Augment
-aug_data = df
+aug_data = pd.DataFrame()
 aug_data = aug_data.append(augmentMyData(df, selectedclass="label", samples=samples))
 
 # Convert augmented data to string type
 aug_data['description'] = aug_data['description'].str[0]
+
+df = df.append(aug_data)
