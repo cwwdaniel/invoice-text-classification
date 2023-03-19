@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import nlpaug.augmenter.word.context_word_embs as aug
+from tqdm import tqdm
 
 # Load Data
 df = pd.read_csv('path/data.csv')
@@ -9,26 +10,31 @@ df = pd.read_csv('path/data.csv')
 bert = aug.ContextualWordEmbsAug(model_path='bert-base-uncased', action='substitute')
 
 # Augment Function
-def augmentMyData(df, repetitions=1, samples=200):
+def augmentMyData(df, selectedclass, repetitions=1, samples=200):
     augmented_texts = []
     # select only the class to augment
-    spam_df = df[df['label'] == 'sample_label'].reset_index(drop=True) # removes unecessary index column
-    for i in tqdm(np.random.randint(0, len(spam_df), samples)):
+    filter_df = df[df['label'] == selectedclass].reset_index(drop=True) # removes unecessary index column
+    for i in tqdm(np.random.randint(0, len(filter_df), samples)):
         # generating 'n_samples' augmented texts
         for _ in range(repetitions):
-            augmented_text = bert.augment(spam_df['description'].iloc[i])
+            augmented_text = bert.augment(filter_df['description'].iloc[i])
             augmented_texts.append(augmented_text)
     
     data = {
         'description': augmented_texts,
-        'label': 'sample_label'        
+        'label': selectedclass        
     }
     aug_df = pd.DataFrame(data)
     return aug_df
 
 # Run Augment
-aug_df = augmentMyData(df, samples=5)
-aug_df
+aug_data = pd.DataFrame()
+aug_data = aug_data.append(augmentMyData(df, selectedclass="selectedclass", samples=5))
 
-# Append Augmented Text
-df = df.append(aug_df)
+# Convert augmented data to string type
+aug_data['description'] = aug_data['description'].str[0]
+aug_data
+
+# Append augmented dataset to original dataset
+df = df.append(aug_data)
+df
