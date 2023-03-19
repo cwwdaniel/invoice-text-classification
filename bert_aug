@@ -37,4 +37,3 @@ aug_data
 
 # Append augmented dataset to original dataset
 df = df.append(aug_data)
-df
