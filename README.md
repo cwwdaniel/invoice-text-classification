@@ -1,6 +1,6 @@
 # Overcoming short text and multi-class imbalance issues in invoice text classification: A data augmentation and deep learning strategy
 
-This repository contains the Python codes used for text cleaning, text augmentation and text classification and evaluation for invoice classification task. This is a combination of data augmentation with deep learning approaches to solve the invoice classsification task. Different augmentation size and approach paired with different classifiers will render different results. A key evaluation metric to consider is the accuracy and the macro-f1 score, where accuracy measures the 
+This repository contains the Python codes used for text cleaning, text augmentation and text classification and evaluation for invoice classification task. This is a combination of data augmentation with deep learning approaches to solve the invoice classsification task. Different augmentation size and approach paired with different classifiers will render different results. A key evaluation metric to consider is the accuracy and the macro-f1 score, given the multi-class labels which introduces severe class imbalance within the invoice text data class distribution. 
 
 ## Data Source
 
