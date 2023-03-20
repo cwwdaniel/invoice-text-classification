@@ -17,9 +17,6 @@ df = pd.read_csv('path/data.csv')
 # Create a separate label column
 df["label_clean"] = df["label"]
 
-# Replace Digits with Blanks
-df['label_clean'] = df['label_clean'].str.replace('\d+', "")
-
 # Assign Cleaning Criteria
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;.&!--#$%^*_+"”:<>"'"'"'?`~Â½¾]')
 STOPWORDS = set(stopwords.words('english'))
@@ -27,18 +24,13 @@ MONTH = {'january','jan','february','feb','march','mar','april','apr','may','jun
 
 # Define Cleaning Sequence
 def clean_text(text):
-    """
-        text: a string
-        
-        return: modified initial string
-    """
+    text = re.sub('\d+', ' ', text) # remove digits
     text = text.lower() # lowercase text
     text = REPLACE_BY_SPACE_RE.sub(' ', text) # replace REPLACE_BY_SPACE_RE symbols by space in text
     text = re.sub(r"\b[a-zA-Z]\b", ' ', text) # single character removal
     text = re.sub(r'\s+', ' ', text) # remove multiple spaces
     text = ' '.join(word for word in text.split() if word not in STOPWORDS) # delete stopwords from text
     text = ' '.join(word for word in text.split() if word not in MONTH) # delete month names from text
-
     return text
 
 # Define Function to Retain only English Words
