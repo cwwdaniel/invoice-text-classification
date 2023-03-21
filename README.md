@@ -9,7 +9,7 @@ Due to data privacy and large volume size of encoded dataset, there are no datas
 ## Text Cleaning
 
 For text cleaning, refer to 'invoice-text-classification/text_cleaning'
-Text cleaning includes removal of digits, stopwords, symbols, single character, multiple spaces and lowering case of text.
+Text cleaning includes removal of digits, stopwords, symbols, single character, multiple spaces, lowering case of text and retaining only English words.
   
 Depending on the dataset type, more cleaning tasks may be required to improve the information retention within the short text, which in itself is a challenge given the limited semantic information.
   
