@@ -8,7 +8,7 @@ Due to data privacy and large volume size of encoded dataset, there are no datas
 
 ## Text Cleaning
 
-For text cleaning, refer to 'invoice-text-classification/text_cleaning'
+For text cleaning, refer to 'invoice-text-classification/text_cleaning'.
 Text cleaning includes removal of digits, stopwords, symbols, single character, multiple spaces, lowering case of text and retaining only English words.
   
 Depending on the dataset type, more cleaning tasks may be required to improve the information retention within the short text, which in itself is a challenge given the limited semantic information.
@@ -17,7 +17,7 @@ For train-text split codes, refer to 'invoice-text-classification/train_test_spl
 
 ## Semantic Enrichment
 
-For semantic enrichment, refer to 'invoice-text-classification/semantic_enrichment'
+For semantic enrichment, refer to 'invoice-text-classification/semantic_enrichment'. Semantic enrichment of the text is based on auxiliary information from the label text.
 
 ## Text Augmentation
 
