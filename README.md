@@ -21,7 +21,7 @@ For semantic enrichment, refer to 'invoice-text-classification/semantic_enrichme
 
 ## Text Augmentation
 
-There are three data augmentation techniques in this repository, namely lexical synonym replacement (WordNet), Word Embedding similar word replacement (GloVe), and Contextual Word Embedding word replacement (BERT). All four methods could be used to generate synthetic training data.
+There are three data augmentation techniques in this repository, namely lexical synonym replacement (WordNet), Word Embedding similar word replacement (GloVe), and Contextual Word Embedding word replacement (BERT). All three methods could be used to generate synthetic training data.
   
 Refer to the links below for the codes:  
 'invoice-text-classification/wordnet_aug'  
