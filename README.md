@@ -1,4 +1,4 @@
-# Semantic Enrichment, Data Augmentation and Deep Learning for Invoice Text Classification: A Novel Strategy
+# Semantic Enrichment, Data Augmentation and Deep Learning for Boosting Invoice Text Classification Performance: A Novel Natural Language Processing Strategy
 
 This repository contains the Python codes used for text cleaning, semantic enrichment, text augmentation and text classification and evaluation for invoice classification task. This is a combination of semantic enrichment and data augmentation with deep learning approaches to solve the invoice classsification task. Different augmentation size and approach paired with different classifiers will render different results. A key evaluation metric to consider is the accuracy and the macro-f1 score, given the multi-class labels which introduces severe class imbalance within the invoice text data class distribution. 
 
