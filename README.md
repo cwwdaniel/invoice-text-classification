@@ -13,7 +13,7 @@ Text cleaning includes removal of digits, stopwords, symbols, single character, 
   
 Depending on the dataset type, more cleaning tasks may be required to improve the information retention within the short text, which in itself is a challenge given the limited semantic information.
   
-For train-text split codes, refer to 'invoice-text-classification/train_test_split'
+For train-test split codes, refer to 'invoice-text-classification/train_test_split'
 
 ## Semantic Enrichment
 
